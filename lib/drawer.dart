@@ -202,6 +202,14 @@ class HeaderDrawer extends StatelessWidget {
                 );
               },
             ),
+            ListTile(
+              leading: Icon(Icons.logout),
+              title: Text(
+                'Logout',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+              onTap: () {},
+            ),
           ],
         ),
       ),

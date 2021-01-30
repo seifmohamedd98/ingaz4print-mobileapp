@@ -1,30 +1,26 @@
 import 'dart:ui';
-import "signup.dart";
-import 'main.dart';
 import 'package:flutter/material.dart';
-import 'business_card.dart';
 /*void main() {
   runApp(Login());
 }*/
 
-GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
-
 class Cart extends StatelessWidget {
+  /* This widget is the root
+      of your application.*/
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Ingaz 4 Print',
+      title: 'ingaz 4 print',
       home: Scaffold(
-        key: _drawerKey,
         appBar: AppBar(
           backgroundColor: Colors.yellow[700],
-          toolbarHeight: 95,
           title: Image.asset(
             'images/logo.png',
             fit: BoxFit.contain,
             height: 80,
           ),
+          toolbarHeight: 95,
           centerTitle: true,
           leading: IconButton(
               icon: Icon(Icons.arrow_back),
@@ -32,113 +28,13 @@ class Cart extends StatelessWidget {
                 Navigator.pop(context);
               }),
         ),
-        body: Mycart(),
-        drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              Container(
-                height: 150,
-                child: DrawerHeader(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "New Admin 1",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 24),
-                          ),
-                          Text(
-                            "Role: Admin",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 24),
-                          )
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Icon(
-                            Icons.account_box,
-                            size: 70,
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.yellow[700],
-                  ),
-                ),
-              ),
-              ListTile(
-                leading: Icon(Icons.home),
-                title: Text(
-                  'Home Page',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Home(),
-                      ));
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.login),
-                title: Text(
-                  'Login',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.account_circle),
-                title: Text(
-                  'Signup',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SignUp(),
-                      ));
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.category),
-                title: Text(
-                  'Categories',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => BussinessCard(),
-                      ));
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.shopping_cart),
-                title: Text(
-                  'Cart',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Column(
+            children: [
+              TitleSection(),
+              CartBody(),
+              CheckoutButton(),
             ],
           ),
         ),
@@ -147,12 +43,7 @@ class Cart extends StatelessWidget {
   }
 }
 
-class Mycart extends StatefulWidget {
-  @override
-  _Mycartstate createState() => _Mycartstate();
-}
-
-class _Mycartstate extends State<Mycart> {
+class TitleSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -160,13 +51,11 @@ class _Mycartstate extends State<Mycart> {
       child: Row(
         children: [
           Expanded(
-            /*1*/
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                /*2*/
                 Container(
-                  padding: const EdgeInsets.only(bottom: 100),
+                  padding: const EdgeInsets.only(bottom: 8),
                   child: Text(
                     'Your Cart :-',
                     style: TextStyle(
@@ -175,59 +64,150 @@ class _Mycartstate extends State<Mycart> {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Table(
-                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                    border: TableBorder.all(width: 3.0, color: Colors.amber),
-                    columnWidths: {
-                      0: FractionColumnWidth(.4),
-                      1: FractionColumnWidth(.3),
-                      2: FractionColumnWidth(.5)
-                    },
-                    children: [
-                      TableRow(children: [
-                        Text(
-                          "Design",
-                          textScaleFactor: 1.8,
-                        ),
-                        Text("Details", textScaleFactor: 1.8),
-                        Text("Description", textScaleFactor: 1.5),
-                      ]),
-                      TableRow(children: [
-                        Text("Flyer", textScaleFactor: 1.5),
-                        Text("order ID: 85", textScaleFactor: 1.5),
-                        Text("I want it", textScaleFactor: 1.5),
-                      ]),
-                      TableRow(children: [
-                        Image.asset(
-                          'images/flyer5.jpg',
-                          fit: BoxFit.contain,
-                          height: 180,
-                        ),
-                        Text("order ID: 89", textScaleFactor: 1.5),
-                        Text("reserve it", textScaleFactor: 1.5),
-                      ]),
-                    ],
-                  ),
-                ),
-                RaisedButton(
-                  padding: EdgeInsetsDirectional.only(start: 150, end: 150),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Home(),
-                        ));
-                  },
-                  color: Colors.yellow[700],
-                  child: Text('ORDER NOW'),
-                ),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class CartBody extends StatefulWidget {
+  @override
+  _CartBodyState createState() => _CartBodyState();
+}
+
+class _CartBodyState extends State<CartBody> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            //3ashan el sora
+            SizedBox(
+              width: 90,
+              child: AspectRatio(
+                aspectRatio: 0.9,
+                child: Container(
+                  padding: EdgeInsets.all(2),
+                  // decoration: BoxDecoration(
+                  //   color: Colors.green,
+                  //   borderRadius: BorderRadius.circular(15),
+                  // ),
+                  child: Image.asset("images/business1.jpg"),
+                ),
+              ),
+            ),
+            //3ashan el details bta3t el order
+            SizedBox(width: 20),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Your Customized Business Card',
+                  style: TextStyle(
+                    fontSize: 16,
+                  ),
+                  maxLines: 2,
+                ),
+                //el const sized box 3ashan ykon feh msafa maben el details wel se3r
+                const SizedBox(height: 15),
+                Text.rich(
+                  TextSpan(
+                    text: "Total Price: 450 EGP",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.red,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Column(
+                children: [
+                  SizedBox.fromSize(
+                    size: Size(53, 50),
+                    child: ClipOval(
+                      child: RaisedButton(
+                        onPressed: () {},
+                        color: Colors.red,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(Icons.delete),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class CheckoutButton extends StatefulWidget {
+  @override
+  _CheckoutButtonState createState() => _CheckoutButtonState();
+}
+
+class _CheckoutButtonState extends State<CheckoutButton> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        vertical: 15,
+        horizontal: 30,
+      ),
+      // padding: EdgeInsets.all(20),
+      child: SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 300),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text.rich(
+                  TextSpan(
+                    text: "Total:\n",
+                    children: [
+                      TextSpan(
+                        text: "450 EGP",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  width: 150,
+                  child: RaisedButton(
+                    onPressed: () {},
+                    color: Colors.yellow[700],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Text(
+                      'Check Out',
+                      style: TextStyle(
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
