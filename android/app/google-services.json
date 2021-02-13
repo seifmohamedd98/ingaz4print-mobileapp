@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "440281939384",
+    "project_id": "ingaz4print-5ca6f",
+    "storage_bucket": "ingaz4print-5ca6f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:440281939384:android:df332630e488984f6fe34d",
+        "android_client_info": {
+          "package_name": "com.example.ingaz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "440281939384-qbsvf3g2rn88bf0j7gkfbprqnklhjomh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6bcsxpUquiM19SjHxN6L2XIn9Bybu8XI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "440281939384-qbsvf3g2rn88bf0j7gkfbprqnklhjomh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
