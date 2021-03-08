@@ -1,6 +1,13 @@
+import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:ingaz/add_paper_property.dart';
+
+import 'models/admin.dart';
 
 GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
+Admin admin = new Admin();
 
 class AddCategorySample extends StatelessWidget {
   @override
@@ -25,7 +32,7 @@ class AddCategorySample extends StatelessWidget {
                 Navigator.pop(context);
               }),
         ),
-        body: SafeArea(
+        body: SingleChildScrollView(
           child: Column(
             children: [
               Padding(
@@ -57,87 +64,148 @@ class AddCategorySampleForm extends StatefulWidget {
 
 class AddCategorySampleFormState extends State<AddCategorySampleForm> {
   final _formKey = GlobalKey<FormState>();
-  var categorytype = ["Business Card", "Flyer", "Notebook"];
-  var categoryselect = "Business Card";
+  String categoryselect = "Notebook";
+
+  final descriptionValue = TextEditingController();
+
+  File _image;
+  final picker = ImagePicker();
+
+  List<String> categories =[];
+
+  Future getImage() async 
+  {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
-      child: Column(children: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(bottom: 8, left: 8, right: 8),
-          child: TextFormField(
-            decoration: InputDecoration(
-              hintText: 'Hena hayt7t el image upload',
-              labelText: 'Image Upload',
-            ),
-          ),
-        ),
-        //Description
-        Padding(
-          padding: EdgeInsets.only(bottom: 8, left: 8, right: 8),
-          child: TextFormField(
-            decoration: InputDecoration(
-              hintText: 'Enter Image Description',
-              labelText: 'Description',
-            ),
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Please enter paper description';
-              } else {
-                return null;
-              }
-            },
-          ),
-        ),
-        Row(
-          children: [
+      child: StreamBuilder(
+        stream: FirebaseFirestore.instance.collection("category").snapshots(),
+        builder: (context, snapshot){
+        if(!snapshot.hasData) return Text("Loading Data.. Please wait.."); 
+
+        for(var document in snapshot.data.docs)
+        {
+          categories.add(document["name"]);
+        }
+        categories = categories.toSet().toList();
+        //categoryselect = categories[0];
+
+        return Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+            //Description
             Padding(
-              padding: EdgeInsets.only(left: 8),
-              child: Text(
-                "Category Type",
-                style: TextStyle(fontSize: 15),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 45, right: 8),
-              child: DropdownButton<String>(
-                items: categorytype.map(
-                  (String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  },
-                ).toList(),
-                onChanged: (String newValue) {
-                  setState(
-                    () {
-                      categoryselect = newValue;
-                    },
-                  );
+              padding: EdgeInsets.only(bottom: 8, left: 8, right: 8),
+              child: TextFormField(
+                controller: descriptionValue,
+                decoration: InputDecoration(
+                  hintText: 'Enter Image Description',
+                  labelText: 'Description',
+                ),
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Please enter paper description';
+                  } else {
+                    return null;
+                  }
                 },
-                value: categoryselect,
               ),
             ),
-          ],
-        ),
-        RaisedButton(
-          onPressed: () {
-            if (_formKey.currentState.validate()) {
-              print('The Form is Valid');
-            }
-          },
-          color: Colors.yellow[700],
-          child: Text(
-            'Add Category Sample',
-            style: TextStyle(
-              fontSize: 20,
+            Row(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 8),
+                  child: Text(
+                    "Category Type",
+                    style: TextStyle(fontSize: 15),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 45, right: 8),
+                  child: DropdownButton<String>(
+                    items: categories.map(
+                      (String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      },
+                    ).toList(),
+                    onChanged: (String newValue) {
+                      setState(
+                        () {
+                          categoryselect = newValue;
+                        },
+                      );
+                    },
+                    value: categoryselect,
+                  ),
+                ),
+              ],
             ),
-          ),
-        ),
-      ]),
+            SizedBox(
+              height: 20,
+            ),
+
+            _image == null ? Text('No image selected.') : Image.file(_image),
+
+            FloatingActionButton(
+              onPressed: getImage,
+              tooltip: 'Pick Image',
+              child: Icon(Icons.add_a_photo,color: Colors.black,),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15))),
+              backgroundColor: Colors.yellow[800],
+              
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Container(
+              width: 300,
+              child: FloatingActionButton
+              (
+                heroTag: "Submit Add Category Sample",
+                onPressed: () 
+                {
+                  admin.addCategorySample(descriptionValue.text, _image, categoryselect);
+                  if (_formKey.currentState.validate()) 
+                  {
+                    print('The Form is Valid');
+                  }
+                  
+                },
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15))),
+                backgroundColor: Colors.yellow[700],
+                child: Text
+                (
+                  'Add Category Sample',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+          ]
+          );
+        }
+      )
     );
   }
 }

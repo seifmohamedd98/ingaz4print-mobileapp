@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 // import 'package:ingaz/main.dart';
 import 'add_paper_property.dart';
+import 'delete_paper_property.dart';
 
 class PaperProperties extends StatelessWidget {
   @override
@@ -32,15 +33,11 @@ class PaperProperties extends StatelessWidget {
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.all(8.0),
-                child: AddProductButton(),
+                child: AddPaperPropertyButton(),
               ),
               Padding(
                 padding: EdgeInsets.all(8.0),
-                child: EditProductButton(),
-              ),
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: DeleteProductButton(),
+                child: DeletePaperPropertyButton(),
               ),
             ],
           ),
@@ -50,7 +47,7 @@ class PaperProperties extends StatelessWidget {
   }
 }
 
-class AddProductButton extends StatelessWidget {
+class AddPaperPropertyButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -74,23 +71,23 @@ class AddProductButton extends StatelessWidget {
   }
 }
 
-class EditProductButton extends StatelessWidget {
+class DeletePaperPropertyButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
       child: RaisedButton(
         onPressed: () {
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => EditProduct(),
-          //   ),
-          // );
+          Navigator.push(
+          context,
+          MaterialPageRoute(
+           builder: (context) => DeletePaperProperty(),
+          ),
+          );
         },
         color: Colors.yellow[700],
         child: Text(
-          'Edit Paper Property',
+          'Delete Paper Property',
           style: TextStyle(fontSize: 28),
         ),
       ),
@@ -98,26 +95,4 @@ class EditProductButton extends StatelessWidget {
   }
 }
 
-class DeleteProductButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: RaisedButton(
-        onPressed: () {
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => DeleteProduct(),
-          //   ),
-          // );
-        },
-        color: Colors.yellow[700],
-        child: Text(
-          'Delete Paper Property',
-          style: TextStyle(fontSize: 26),
-        ),
-      ),
-    );
-  }
-}
+

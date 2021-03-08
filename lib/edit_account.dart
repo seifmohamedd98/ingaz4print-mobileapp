@@ -29,21 +29,29 @@ class EditAccount extends StatelessWidget {
                 Navigator.pop(context);
               }),
         ),
-        body: SafeArea(
-          child: Column(
-            children: [
-              Padding(
-                padding: EdgeInsets.only(top: 8.0),
-                child: Text(
-                  'Edit Account',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 35,
+        body: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SafeArea(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          'Edit Account',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 35,
+                          ),
+                        ),
+                      ),
+                      EditAccountForm(),
+                    ],
                   ),
                 ),
-              ),
-              EditAccountForm(),
-            ],
+              ],
+            ),
           ),
         ),
       ),

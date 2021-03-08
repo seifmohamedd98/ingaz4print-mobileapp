@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-
+import 'package:ingaz/models/client.dart';
+import 'package:ingaz/services/auth.dart';
+import 'package:ingaz/services/database.dart';
+import 'models/user.dart';
 /*void main() {
   runApp(SignUp());
 }*/
@@ -29,7 +32,14 @@ class SignUp extends StatelessWidget {
                 Navigator.pop(context);
               }),
         ),
-        body: MyCustomForm(),
+        body: Center(
+            child: SingleChildScrollView(
+          child: Column(
+            children: [
+              MyCustomForm(),
+            ],
+          ),
+        )),
       ),
     );
   }
@@ -48,8 +58,11 @@ enum Gender { male, female }
 class MyCustomFormState extends State<MyCustomForm> {
   final _formKey = GlobalKey<FormState>();
   Gender _gender = Gender.male;
-  DateTime _dateTime;
+  String _email, _password, _username, _fname, _lname, _address, _mobile;
+  final _auth = Auth();
+  final database = DatabaseManager();
 
+//DateTime _dateTime;
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -60,6 +73,9 @@ class MyCustomFormState extends State<MyCustomForm> {
             padding: EdgeInsets.only(left: 8, right: 8),
             child: TextFormField(
               decoration: InputDecoration(hintText: 'Enter E-mail'),
+              onChanged: (value) {
+                _email = value;
+              },
               validator: (value) {
                 if (value.isEmpty) {
                   return 'Please enter E-mail';
@@ -73,6 +89,9 @@ class MyCustomFormState extends State<MyCustomForm> {
             padding: EdgeInsets.only(left: 8, right: 8),
             child: TextFormField(
               decoration: InputDecoration(hintText: 'Username'),
+              onChanged: (value) {
+                _username = value;
+              },
               validator: (value) {
                 if (value.isEmpty) {
                   return 'Please enter username';
@@ -87,6 +106,9 @@ class MyCustomFormState extends State<MyCustomForm> {
             child: TextFormField(
               decoration: InputDecoration(hintText: 'Password'),
               obscureText: true,
+              onChanged: (value) {
+                _password = value;
+              },
               validator: (value) {
                 if (value.isEmpty) {
                   return 'Please enter password';
@@ -114,6 +136,9 @@ class MyCustomFormState extends State<MyCustomForm> {
             padding: EdgeInsets.only(left: 8, right: 8),
             child: TextFormField(
               decoration: InputDecoration(hintText: 'First Name'),
+              onChanged: (value) {
+                _fname = value;
+              },
               validator: (value) {
                 if (value.isEmpty) {
                   return 'Please enter First Name';
@@ -127,6 +152,9 @@ class MyCustomFormState extends State<MyCustomForm> {
             padding: EdgeInsets.only(left: 8, right: 8),
             child: TextFormField(
               decoration: InputDecoration(hintText: 'Last Name'),
+              onChanged: (value) {
+                _lname = value;
+              },
               validator: (value) {
                 if (value.isEmpty) {
                   return 'Please enter Last Name';
@@ -140,6 +168,9 @@ class MyCustomFormState extends State<MyCustomForm> {
             padding: EdgeInsets.only(left: 8, right: 8),
             child: TextFormField(
               decoration: InputDecoration(hintText: 'Address'),
+              onChanged: (value) {
+                _address = value;
+              },
               validator: (value) {
                 if (value.isEmpty) {
                   return 'Please enter Address';
@@ -154,6 +185,9 @@ class MyCustomFormState extends State<MyCustomForm> {
             child: TextFormField(
               decoration: InputDecoration(hintText: 'Mobile Number'),
               keyboardType: TextInputType.number,
+              onChanged: (value) {
+                _mobile = value;
+              },
               validator: (value) {
                 if (value.isEmpty) {
                   return 'Please enter Mobile Number';
@@ -208,9 +242,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                             firstDate: DateTime(1900),
                             lastDate: DateTime.now())
                         .then((date) {
-                      setState(() {
-                        _dateTime = date;
-                      });
+                      setState(() {});
                     });
                   },
                 ),
@@ -221,16 +253,42 @@ class MyCustomFormState extends State<MyCustomForm> {
             padding: EdgeInsets.only(right: 20),
             child: Align(
               alignment: Alignment.bottomRight,
-              child: RaisedButton(
-                onPressed: () {
-                  if (_formKey.currentState.validate()) {
-                    print('The Form is Valid');
-                  }
-                },
-                color: Colors.yellow[700],
-                child: Text(
-                  'Sign Up',
-                  style: TextStyle(fontSize: 18),
+              child: Builder(
+                builder: (context) => RaisedButton(
+                  onPressed: () async {
+                    if (_formKey.currentState.validate()) {
+                      _formKey.currentState.save();
+
+                      try {
+                        print('The Form is Valid');
+                        print(_email);
+                        print(_password);
+                        final authResult =
+                            await _auth.SignUp(_email, _password);
+                        print(authResult.user.uid);
+                        database.addUser(Client(
+                          email: _email,
+                          username: _username,
+                          password: _password,
+                          fname: _fname,
+                          lname: _lname,
+                          address: _address,
+                          mobile: _mobile,
+                          access: "client",
+                          uId: authResult.user.uid,
+                        ));
+                      } catch (e) {
+                        Scaffold.of(context).showSnackBar(SnackBar(
+                          content: Text(e.message),
+                        ));
+                      }
+                    }
+                  },
+                  color: Colors.yellow[700],
+                  child: Text(
+                    'Sign Up',
+                    style: TextStyle(fontSize: 18),
+                  ),
                 ),
               ),
             ),

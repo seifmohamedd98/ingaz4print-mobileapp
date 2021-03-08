@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:ingaz/models/client.dart';
+import 'package:ingaz/models/internal_user.dart';
+import 'package:ingaz/services/auth.dart';
+import 'package:ingaz/services/database.dart';
+import 'models/user.dart';
 
 /*void main() {
   runApp(SignUp());
@@ -29,23 +34,14 @@ class CreateAccount extends StatelessWidget {
                 Navigator.pop(context);
               }),
         ),
-        body: SafeArea(
+        body: Center(
+            child: SingleChildScrollView(
           child: Column(
             children: [
-              Padding(
-                padding: EdgeInsets.only(top: 5),
-                // child: Text(
-                //   'Create Account',
-                //   style: TextStyle(
-                //     fontWeight: FontWeight.bold,
-                //     fontSize: 35,
-                //   ),
-                // ),
-              ),
               CreateAccountForm(),
             ],
           ),
-        ),
+        )),
       ),
     );
   }
@@ -64,7 +60,11 @@ enum Gender { male, female }
 class CreateAccountFormState extends State<CreateAccountForm> {
   final _formKey = GlobalKey<FormState>();
   Gender _gender = Gender.male;
-  DateTime _dateTime;
+  String _email, _password, _username, _fname, _lname, _address, _mobile;
+  final _auth = Auth();
+  final database = DatabaseManager();
+
+//DateTime _dateTime;
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -74,9 +74,10 @@ class CreateAccountFormState extends State<CreateAccountForm> {
           Padding(
             padding: EdgeInsets.only(left: 8, right: 8),
             child: TextFormField(
-              decoration: InputDecoration(
-                hintText: 'Enter E-mail',
-              ),
+              decoration: InputDecoration(hintText: 'Enter E-mail'),
+              onChanged: (value) {
+                _email = value;
+              },
               validator: (value) {
                 if (value.isEmpty) {
                   return 'Please enter E-mail';
@@ -90,6 +91,9 @@ class CreateAccountFormState extends State<CreateAccountForm> {
             padding: EdgeInsets.only(left: 8, right: 8),
             child: TextFormField(
               decoration: InputDecoration(hintText: 'Username'),
+              onChanged: (value) {
+                _username = value;
+              },
               validator: (value) {
                 if (value.isEmpty) {
                   return 'Please enter username';
@@ -104,6 +108,9 @@ class CreateAccountFormState extends State<CreateAccountForm> {
             child: TextFormField(
               decoration: InputDecoration(hintText: 'Password'),
               obscureText: true,
+              onChanged: (value) {
+                _password = value;
+              },
               validator: (value) {
                 if (value.isEmpty) {
                   return 'Please enter password';
@@ -131,6 +138,9 @@ class CreateAccountFormState extends State<CreateAccountForm> {
             padding: EdgeInsets.only(left: 8, right: 8),
             child: TextFormField(
               decoration: InputDecoration(hintText: 'First Name'),
+              onChanged: (value) {
+                _fname = value;
+              },
               validator: (value) {
                 if (value.isEmpty) {
                   return 'Please enter First Name';
@@ -144,6 +154,9 @@ class CreateAccountFormState extends State<CreateAccountForm> {
             padding: EdgeInsets.only(left: 8, right: 8),
             child: TextFormField(
               decoration: InputDecoration(hintText: 'Last Name'),
+              onChanged: (value) {
+                _lname = value;
+              },
               validator: (value) {
                 if (value.isEmpty) {
                   return 'Please enter Last Name';
@@ -157,6 +170,9 @@ class CreateAccountFormState extends State<CreateAccountForm> {
             padding: EdgeInsets.only(left: 8, right: 8),
             child: TextFormField(
               decoration: InputDecoration(hintText: 'Address'),
+              onChanged: (value) {
+                _address = value;
+              },
               validator: (value) {
                 if (value.isEmpty) {
                   return 'Please enter Address';
@@ -171,6 +187,9 @@ class CreateAccountFormState extends State<CreateAccountForm> {
             child: TextFormField(
               decoration: InputDecoration(hintText: 'Mobile Number'),
               keyboardType: TextInputType.number,
+              onChanged: (value) {
+                _mobile = value;
+              },
               validator: (value) {
                 if (value.isEmpty) {
                   return 'Please enter Mobile Number';
@@ -211,7 +230,7 @@ class CreateAccountFormState extends State<CreateAccountForm> {
           Row(
             children: [
               Padding(
-                padding: EdgeInsets.only(left: 10, bottom: 5),
+                padding: EdgeInsets.only(left: 15),
                 child: RaisedButton(
                   child: Text(
                     'Birthday',
@@ -224,30 +243,56 @@ class CreateAccountFormState extends State<CreateAccountForm> {
                             initialDate: DateTime.now(),
                             firstDate: DateTime(1900),
                             lastDate: DateTime.now())
-                        .then(
-                      (date) {
-                        setState(
-                          () {
-                            _dateTime = date;
-                          },
-                        );
-                      },
-                    );
+                        .then((date) {
+                      setState(() {});
+                    });
                   },
                 ),
               ),
             ],
           ),
-          RaisedButton(
-            onPressed: () {
-              if (_formKey.currentState.validate()) {
-                print('The Form is Valid');
-              }
-            },
-            color: Colors.yellow[700],
-            child: Text(
-              'Create Internal Account',
-              style: TextStyle(fontSize: 20),
+          Padding(
+            padding: EdgeInsets.only(right: 20),
+            child: Align(
+              alignment: Alignment.bottomRight,
+              child: Builder(
+                builder: (context) => RaisedButton(
+                  onPressed: () async {
+                    if (_formKey.currentState.validate()) {
+                      _formKey.currentState.save();
+
+                      try {
+                        print('The Form is Valid');
+                        print(_email);
+                        print(_password);
+                        final authResult =
+                            await _auth.SignUp(_email, _password);
+                        print(authResult.user.uid);
+                        database.addUser(Client(
+                          email: _email,
+                          username: _username,
+                          password: _password,
+                          fname: _fname,
+                          lname: _lname,
+                          address: _address,
+                          mobile: _mobile,
+                          access: "internal",
+                          uId: authResult.user.uid,
+                        ));
+                      } catch (e) {
+                        Scaffold.of(context).showSnackBar(SnackBar(
+                          content: Text(e.message),
+                        ));
+                      }
+                    }
+                  },
+                  color: Colors.yellow[700],
+                  child: Text(
+                    'Create Internal Account',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                ),
+              ),
             ),
           ),
         ],

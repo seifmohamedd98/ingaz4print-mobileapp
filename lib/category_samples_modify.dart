@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ingaz/delete_paper_property.dart';
+import 'package:ingaz/modify_categories.dart';
 // import 'package:ingaz/main.dart';
 import 'add_category_sample.dart';
 
@@ -32,15 +34,12 @@ class CategorySamples extends StatelessWidget {
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.all(8.0),
-                child: AddSampleButton(),
+                child: CategoryButton("Add Category Sample"),
               ),
+
               Padding(
                 padding: EdgeInsets.all(8.0),
-                child: EditSampleButton(),
-              ),
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: DeleteSampleButton(),
+                child: CategoryButton("Delete Category Sample"),
               ),
             ],
           ),
@@ -50,7 +49,65 @@ class CategorySamples extends StatelessWidget {
   }
 }
 
-class AddSampleButton extends StatelessWidget {
+class CategoryButton extends StatelessWidget
+{
+  String _name;
+  CategoryButton(name)
+  {
+    this._name = name;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+  return Container(
+    width: MediaQuery.of(context).size.width*0.9,
+    padding: EdgeInsets.only(top: 20.0),
+    child: FloatingActionButton
+    (
+      heroTag: _name,
+      onPressed: () 
+      { 
+        if(_name == "Add Category Sample")
+        {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                
+                
+
+                builder: (context) => AddCategorySample()
+              )
+          );
+        }
+        else
+        {
+          /*Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DeleteCategorySample()
+              )
+          );*/
+        }
+      },
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15))),
+      backgroundColor: Colors.yellow[700],
+      child: Text
+      (
+        _name,
+        style: TextStyle(
+          fontSize: 20,
+          color: Colors.black,
+        ),
+      ),
+    ),
+  );
+}
+
+
+}
+
+
+/*class AddSampleButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -74,29 +131,6 @@ class AddSampleButton extends StatelessWidget {
   }
 }
 
-class EditSampleButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: RaisedButton(
-        onPressed: () {
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => EditCategorySample(),
-          //   ),
-          // );
-        },
-        color: Colors.yellow[700],
-        child: Text(
-          'Edit Catgeory Sample',
-          style: TextStyle(fontSize: 28),
-        ),
-      ),
-    );
-  }
-}
 
 class DeleteSampleButton extends StatelessWidget {
   @override
@@ -119,5 +153,4 @@ class DeleteSampleButton extends StatelessWidget {
         ),
       ),
     );
-  }
-}
+  }*/

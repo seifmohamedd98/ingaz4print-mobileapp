@@ -1,10 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 // import 'package:ingaz/main.dart';
-import 'business_card.dart';
-import 'flyer.dart';
-import 'notebook.dart';
+import 'samples.dart';
+
+String category;
 
 class Categories extends StatelessWidget {
+
+  List< String> categories = [];
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -28,98 +32,83 @@ class Categories extends StatelessWidget {
           ),
         ),
         backgroundColor: Colors.white,
-        body: Container(
+        body: Container
+        (
           alignment: Alignment.center,
-          child: Column(
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: BussinesButton(),
-              ),
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: FlyerButton(),
-              ),
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: NoteButton(),
-              ),
-            ],
-          ),
+          child: StreamBuilder
+          (
+            stream: FirebaseFirestore.instance.collection("category").snapshots(),
+            builder: (context, snapshot)
+            {
+              if(!snapshot.hasData) return Text("Loading Data.. Please wait.."); 
+
+              for(var document in snapshot.data.docs)
+              {
+                categories.add(document["name"]);
+              }
+              categories = categories.toSet().toList();
+            
+            
+            
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: categories.map((String data) {
+                  return CategoryButton(data);
+
+                }).toList()
+              );
+            }
+          )
         ),
       ),
     );
   }
 }
 
-class BussinesButton extends StatelessWidget {
+
+
+class CategoryButton extends StatelessWidget
+{
+  String _name;
+
+  CategoryButton(name)
+  {
+    this._name = name;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: RaisedButton(
-        onPressed: () {
-          Navigator.push(
+  return Container(
+    width: MediaQuery.of(context).size.width*0.9,
+    padding: EdgeInsets.only(top: 20.0),
+    child: FloatingActionButton
+    (
+      heroTag: _name,
+      onPressed: () 
+      { 
+        category = _name;
+         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => BussinessCard(),
-            ),
-          );
-        },
-        color: Colors.yellow[700],
-        child: Text(
-          'Business Card',
-          style: TextStyle(fontSize: 25),
+              builder: (context) => Samples()
+            )
+         );
+      },
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15))),
+      backgroundColor: Colors.yellow[700],
+      child: Text
+      (
+        _name,
+        style: TextStyle(
+          fontSize: 20,
+          color: Colors.black,
         ),
       ),
-    );
-  }
+    ),
+  );
 }
 
-class FlyerButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: RaisedButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => Flyer(),
-            ),
-          );
-        },
-        color: Colors.yellow[700],
-        child: Text(
-          'Flyer',
-          style: TextStyle(fontSize: 28),
-        ),
-      ),
-    );
-  }
-}
 
-class NoteButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: RaisedButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => Notebook(),
-            ),
-          );
-        },
-        color: Colors.yellow[700],
-        child: Text(
-          'Notebook',
-          style: TextStyle(fontSize: 25),
-        ),
-      ),
-    );
-  }
+
+
 }

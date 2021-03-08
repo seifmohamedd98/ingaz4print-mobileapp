@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 // import 'package:ingaz/main.dart';
+import 'add_category.dart';
+import 'delete_category.dart';
+
 
 class ModifyCategories extends StatelessWidget {
   @override
@@ -31,11 +34,11 @@ class ModifyCategories extends StatelessWidget {
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.all(8.0),
-                child: AddCategoryButton(),
+                child: CategoryButton("Add Category"),
               ),
               Padding(
                 padding: EdgeInsets.all(8.0),
-                child: DeleteCategoryButton(),
+                child: CategoryButton("Delete Category"),
               ),
             ],
           ),
@@ -45,50 +48,54 @@ class ModifyCategories extends StatelessWidget {
   }
 }
 
-class AddCategoryButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: RaisedButton(
-        onPressed: () {
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => AddCategory(),
-          //   ),
-          // );
-        },
-        color: Colors.yellow[700],
-        child: Text(
-          'Add Category',
-          style: TextStyle(fontSize: 28),
-        ),
-      ),
-    );
+class CategoryButton extends StatelessWidget
+{
+  String _name;
+  CategoryButton(name)
+  {
+    this._name = name;
   }
-}
 
-class DeleteCategoryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: RaisedButton(
-        onPressed: () {
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => DeleteCategory(),
-          //   ),
-          // );
-        },
-        color: Colors.yellow[700],
-        child: Text(
-          'Delete Category',
-          style: TextStyle(fontSize: 26),
+  return Container(
+    width: MediaQuery.of(context).size.width*0.9,
+    padding: EdgeInsets.only(top: 20.0),
+    child: FloatingActionButton
+    (
+      heroTag: _name,
+      onPressed: () 
+      { 
+        if(_name == "Add Category")
+        {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AddCategory()
+              )
+          );
+        }
+        else
+        {
+         Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DeleteCategory()
+              )
+          );
+        }
+      },
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15))),
+      backgroundColor: Colors.yellow[700],
+      child: Text
+      (
+        _name,
+        style: TextStyle(
+          fontSize: 20,
+          color: Colors.black,
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
